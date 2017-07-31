@@ -1,5 +1,4 @@
 info:
   profile: dev
   from: git-repo
-  # REDIS
-  database:2
+  database: 2
