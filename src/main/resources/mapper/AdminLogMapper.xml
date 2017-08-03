@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.product.orm.mapper.AdminLogMapper" >
+  <resultMap id="BaseResultMap" type="com.module.product.orm.model.AdminLog" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="oper_name" property="operName" jdbcType="VARCHAR" />
+    <result column="oper_type" property="operType" jdbcType="VARCHAR" />
+    <result column="oper_describe" property="operDescribe" jdbcType="VARCHAR" />
+    <result column="oper_level" property="operLevel" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="TIMESTAMP" />
+    <result column="oper_param" property="operParam" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <resultMap type="com.module.product.common.dto.AdminLogDto" id="AdminLogDtoResultMap" extends="BaseResultMap">
+    <result property="operLevelDto" column="oper_level" />
+    <result property="operTypeDto" column="oper_type" />
+  </resultMap>
+
+  <select id="select4DataTable" resultMap="AdminLogDtoResultMap" parameterType="com.module.product.common.search.AdminLogSearchBean">
+    select *
+    from admin_log
+    <trim prefix="where" prefixOverrides="and | or ">
+      <if test="userName != null and userName != ''">AND user_name like concat('${userName}','%')</if>
+      <if test="operType != null and operType != ''">AND oper_type = #{operType}</if>
+      <if test="operLevel != null and operLevel != ''">AND oper_level = #{operLevel}</if>
+      <if test="dateString != null and dateString != ''">
+        <![CDATA[ AND oper_time>=#{startDate} AND oper_time<=#{endDate} ]]></if>
+    </trim>
+    ORDER BY oper_time DESC
+  </select>
+
+</mapper>

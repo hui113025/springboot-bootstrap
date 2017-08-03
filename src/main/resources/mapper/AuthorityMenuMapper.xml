@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.product.orm.mapper.AuthorityMenuMapper">
+    <resultMap id="BaseResultMap" type="com.module.product.orm.model.AuthorityMenu">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_url" property="menuUrl" jdbcType="VARCHAR"/>
+        <result column="menu_enable" property="menuEnable" jdbcType="TINYINT"/>
+        <result column="menu_parent_id" property="menuParentId" jdbcType="INTEGER"/>
+        <result column="menu_icon" property="menuIcon" jdbcType="VARCHAR"/>
+        <result column="menu_code" property="menuCode" jdbcType="VARCHAR"/>
+        <result column="menu_desc" property="menuDesc" jdbcType="VARCHAR"/>
+        <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER"/>
+        <result column="last_modify_datetime" property="lastModifyDatetime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getResourcesByUser" resultType="int" parameterType="int">
+        SELECT
+        DISTINCT p.resources_id
+        FROM
+        authority_permission p
+        INNER JOIN authority_user_role r on r.role_id = p.role_id
+        WHERE
+        r.user_id = #{userId}
+    </select>
+
+    <select id="getParentMenus" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select * from authority_menu where menu_parent_id = 0
+    </select>
+
+    <select id="getSubMenus" resultMap="BaseResultMap" parameterType="java.util.List">
+        select * from authority_menu where menu_parent_id != 0
+        <if test="list!=null and list.size() > 0 ">
+            and id in
+            <foreach item="id" collection="list" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="checkMenuUnique" resultType="int" parameterType="com.module.product.orm.model.AuthorityMenu">
+        select count(id) from authority_menu
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id != null">id != #{id} AND</if>
+            (
+            <if test="menuName != null and menuName != ''">menu_name = #{menuName}</if>
+            <if test="menuUrl != null and menuUrl != ''">or menu_url = #{menuUrl}</if>
+            <if test="menuCode != null and menuCode != ''">or menu_code = #{menuCode}</if>
+            )
+        </trim>
+    </select>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+<!--
+    <properties resource="application.properties"/>
+-->
+
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.module.product.orm.core.Mapper "/>
+        </plugin>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/test"
+                        userId="root"
+                        password="1234">
+        </jdbcConnection>
+        <!-- targetPackage 根据你的项目自行修改 -->
+        <javaModelGenerator targetPackage="com.module.product.orm.model" targetProject="${targetJavaProject}"/>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="${targetResourcesProject}"/>
+
+        <!-- targetPackage 根据你的项目自行修改 -->
+        <javaClientGenerator targetPackage="com.module.product.orm.mapper" targetProject="${targetJavaProject}"
+                             type="XMLMAPPER"/>
+        <!-- tableName = 要生成的表名称，支持SQL通配符 eg:tableName=% 生成所有表 -->
+        <table tableName="X">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>
