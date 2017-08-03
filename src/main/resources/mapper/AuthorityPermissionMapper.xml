@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.product.orm.mapper.AuthorityPermissionMapper">
+    <resultMap id="BaseResultMap" type="com.module.product.orm.model.AuthorityPermission">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="resources_id" property="resourcesId" jdbcType="INTEGER"/>
+        <result column="resources_code" property="resourcesCode" jdbcType="VARCHAR"/>
+        <result column="operation_id" property="operationId" jdbcType="INTEGER"/>
+        <result column="operation_code" property="operationCode" jdbcType="VARCHAR"/>
+        <result column="category_id" property="categoryId" jdbcType="VARCHAR"/>
+        <result column="permission_code" property="permissionCode" jdbcType="VARCHAR"/>
+        <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER"/>
+        <result column="last_modify_datetime" property="lastModifyDatetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="findCateIdByAdmin" resultType="string" >
+        select id,category_id
+        from authority_permission
+    </select>
+
+    <!-- 根据用户ID获取权限数据 -->
+    <select id="getPermissionByUserID" resultMap="BaseResultMap">
+        select p.* from authority_roles r
+        inner join authority_user_role ur on r.id = ur.role_id
+        inner join authority_users u on u.id = ur.user_id
+        inner join authority_permission p on ur.role_id = p.role_id
+        where r.enable = 1 and u.id = #{uid}
+    </select>
+
+
+    <select id="getMenuIdByRoleId" resultType="int" parameterType="java.util.Map">
+        select resources_id from authority_permission where role_id = #{roleId} group by resources_id
+    </select>
+
+    <select id="getOperIdByRoleMenu" resultType="int" parameterType="java.util.Map">
+        select operation_id from authority_permission where role_id = #{roleId} and resources_id = #{menuId} group by
+        operation_id
+    </select>
+
+    <select id="getCateIdByRoleMenuOper" resultType="String" parameterType="java.util.Map">
+        select category_id from authority_permission where role_id = #{roleId} and resources_id = #{menuId} and
+        operation_id = #{operId}
+    </select>
+
+    <delete id="delRoleAuth" parameterType="java.util.Map">
+        delete from authority_permission
+        <trim prefix="where" prefixOverrides="and | or ">
+            <if test="roleId != null">and role_id = #{roleId}</if>
+            <if test="resourcesId != null">and resources_id = #{resourcesId}</if>
+            <if test="operationId != null">and operation_id = #{operationId}</if>
+        </trim>
+    </delete>
+</mapper>

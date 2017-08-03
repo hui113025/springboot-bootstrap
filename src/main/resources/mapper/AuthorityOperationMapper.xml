@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.module.product.orm.mapper.AuthorityOperationMapper">
+    <resultMap id="BaseResultMap" type="com.module.product.orm.model.AuthorityOperation">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="menu_id" property="menuId" jdbcType="INTEGER"/>
+        <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER"/>
+        <result column="last_modify_datetime" property="lastModifyDatetime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getAuthOperListByMenuId" resultMap="BaseResultMap" parameterType="long">
+        select *
+        from authority_operation
+        where menu_id = #{menuId}
+    </select>
+
+
+    <select id="checkOperUnique" resultType="int" parameterType="com.module.product.orm.model.AuthorityOperation">
+        select count(id) from authority_operation
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="menuId!=null">menu_id = #{menuId} AND</if>
+            <if test="id != null and id != -1">id != #{id} AND</if>
+            <if test="code != null and code != ''">CODE = #{code}</if>
+        </trim>
+    </select>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+    <!-- sitemesh 只对 HTTP 响应头中 Content-Type 为 text/html 的类型进行拦截和装饰 -->
+    <mime-type>text/html</mime-type>
+    <!-- 所有请求都被main.jsp模板页修饰 -->
+    <mapping path="/*" decorator="/WEB-INF/decorator/main.jsp" />
+    <!-- 登录页不被装饰 -->
+    <mapping path="/auth/login" exclue="true" />
+    <mapping path="/auth/signOut" exclue="true" />
+    <mapping path="/role/list/user" exclue="true" />
+    <mapping path="/resources/*" exclue="true" />
+</sitemesh>

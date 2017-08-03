@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.module.product.orm.mapper.AuthorityUsersMapper">
+  <resultMap id="BaseResultMap" type="com.module.product.orm.model.AuthorityUsers">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flower_name" jdbcType="VARCHAR" property="flowerName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="num" jdbcType="VARCHAR" property="num" />
+    <result column="user_lock" jdbcType="INTEGER" property="userLock" />
+    <result column="user_status" jdbcType="INTEGER" property="userStatus" />
+    <result column="expand_code" jdbcType="VARCHAR" property="expandCode" />
+    <result column="channel_code" jdbcType="VARCHAR" property="channelCode" />
+    <result column="channel_type" jdbcType="INTEGER" property="channelType" />
+    <result column="proxy_type" jdbcType="INTEGER" property="proxyType" />
+    <result column="credentials_num" jdbcType="VARCHAR" property="credentialsNum" />
+    <result column="credentials_img" jdbcType="VARCHAR" property="credentialsImg" />
+    <result column="recharge_amount" jdbcType="INTEGER" property="rechargeAmount" />
+    <result column="consumption_amount" jdbcType="INTEGER" property="consumptionAmount" />
+    <result column="surplus_amount" jdbcType="INTEGER" property="surplusAmount" />
+    <result column="receivable_amount" jdbcType="INTEGER" property="receivableAmount" />
+    <result column="administrator" jdbcType="INTEGER" property="administrator" />
+    <result column="last_modify_user_id" jdbcType="INTEGER" property="lastModifyUserId" />
+    <result column="last_modify_user_email" jdbcType="VARCHAR" property="lastModifyUserEmail" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_datetime" jdbcType="TIMESTAMP" property="createDatetime" />
+    <result column="last_modify_datetime" jdbcType="TIMESTAMP" property="lastModifyDatetime" />
+    <result column="last_login_datetime" jdbcType="TIMESTAMP" property="lastLoginDatetime" />
+  </resultMap>
+
+
+  <select id="select4DataTable" parameterType="com.module.product.common.search.AuthorityUserSearchBean" resultMap="BaseResultMap">
+    select *
+    from authority_users
+    <trim prefix="where" prefixOverrides="and | or ">
+      <if test="mobile != null and mobile != ''">and mobile = #{mobile}</if>
+      <if test="email != null and email != ''">and email like CONCAT('%','${email}','%')</if>
+      <if test="num != null and num != ''">and num = #{num}</if>
+      <if test="userStatus != null and userStatus != -1">and user_status = #{userStatus}</if>
+      <if test="dateString != null and dateString != ''"><![CDATA[ and create_datetime>=#{startDate} and create_datetime<=#{endDate} ]]></if>
+      <if test="name != null and name != ''">and name = #{name}</if>
+      <if test="channelCode != null and channelCode != ''">and channel_code = #{channelCode}</if>
+      <if test="createDatetime != null">and create_datetime = #{createDatetime}</if>
+      <if test="channelType != null and channelType != ''">and channel_type = #{channelType}</if>
+      <if test="searchType != null and searchType == 1">and channel_type = 0 </if>
+    </trim>
+    ORDER BY create_datetime DESC
+  </select>
+
+  <select id="select4DataTableByChannel" parameterType="com.module.product.common.search.AuthorityUserSearchBean" resultType="com.module.product.common.dto.AuthorityUsersDto">
+    select
+      e.email as emailExpand,
+      u.id,
+      u.name,
+      u.flower_name AS flowerName,
+      u.mobile,
+      u.email,
+      u.sex,
+      u.job,
+      u.num,
+      u.user_lock AS userLock,
+      u.user_status AS userStatus,
+      u.expand_code AS expandCode,
+      u.channel_code AS channelCode,
+      u.channel_type AS channelType,
+      u.proxy_type AS proxyType,
+      u.credentials_num AS credentialsNum,
+      u.credentials_img AS credentialsImg,
+      u.recharge_amount AS rechargeAmount,
+      u.consumption_amount AS consumptionAmount,
+      u.surplus_amount AS surplus_amount,
+      u.receivable_amount AS receivableAmount,
+      u.administrator,
+      u.last_modify_user_id AS lastModifyUserId,
+      u.last_modify_user_email AS lastModifyUserEmail,
+      u.create_user_id AS createUserId,
+      u.create_datetime AS createDatetime,
+      u.last_modify_datetime AS lastModifyDatetime,
+      u.last_login_datetime AS lastLoginDatetime
+    from authority_users u
+    left join authority_users e
+    on e.id = u.create_user_id
+    and e.channel_type = 1
+    and e.user_status = 1
+    <trim prefix="where" prefixOverrides="and | or ">
+      <if test="isAdmin != null ">
+        <if test="emailExpand !=null and emailExpand !='' and isAdmin == 1">
+          and (
+          (u.channel_type = 1 and u.email = #{emailExpand})
+          or
+          (u.channel_type = 2 and u.create_user_id in (select id from  authority_users where email = #{emailExpand}))
+          )
+        </if>
+        <if test="isAdmin == 0">
+          and u.create_user_id = #{loginUserId}
+        </if>
+      </if>
+      <if test="channelType !=null">
+        and u.channel_type = #{channelType}
+      </if>
+      <if test="mobile != null and mobile != ''">and u.mobile = #{mobile}</if>
+      <if test="email != null and email != ''">and u.email like CONCAT('%','${email}','%')</if>
+      <if test="num != null and num != ''">and u.num = #{num}</if>
+      <if test="userStatus != null and userStatus != -1">and u.user_status = #{userStatus}</if>
+      <if test="dateString != null and dateString != ''"><![CDATA[ and u.create_datetime>=#{startDate} and u.create_datetime<=#{endDate} ]]></if>
+      <if test="name != null and name != ''">and u.name = #{name}</if>
+      <if test="channelCode != null and channelCode != ''">and u.channel_code = #{channelCode}</if>
+      <if test="createDatetime != null">and u.create_datetime = #{createDatetime}</if>
+    </trim>
+    ORDER BY u.create_datetime DESC
+  </select>
+
+  <select id="getUsersByEmail" parameterType="String" resultMap="BaseResultMap">
+    select * from authority_users where email = #{email} limit 0,1
+  </select>
+
+  <select id="getUsersByRoleId" parameterType="int" resultMap="BaseResultMap">
+    select u.* from authority_user_role ur
+    inner join authority_users u on u.id = ur.user_id
+    where ur.role_id = #{roleId} ORDER BY ur.last_modify_datetime DESC
+  </select>
+
+  <select id="getUserByEmailAndRoleId" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select u.* from authority_users u where u.email like  CONCAT(#{email},'%')  and
+    not exists(select ur.id from authority_user_role ur where ur.role_id = #{roleId} and ur.user_id = u.id)
+  </select>
+
+  <update id="updateUserLoginDate" parameterType="com.module.product.orm.model.AuthorityUsers">
+    update authority_users set last_login_datetime = #{lastLoginDatetime} where id = #{id}
+  </update>
+
+
+  <update id="lockingUser" parameterType="com.module.product.orm.model.AuthorityUsers">
+    update authority_users set user_lock = #{userLock},last_modify_user_id = #{lastModifyUserId},last_modify_user_email = #{lastModifyUserEmail},last_modify_datetime = #{lastModifyDatetime} where id = #{id}
+  </update>
+
+
+  <select id="checkUserEmailUnique" parameterType="com.module.product.orm.model.AuthorityUsers" resultType="int">
+    select count(id) from authority_users
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="id != null">id != #{id} AND </if>
+      <if test="email != null and email != ''"> email = #{email} </if>
+    </trim>
+  </select>
+
+  <select id="checkUserNumUnique" parameterType="com.module.product.orm.model.AuthorityUsers" resultType="int">
+    select count(id) from authority_users
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="id != null">id != #{id} AND </if>
+      <if test="num != null and num != ''"> num = #{num} </if>
+    </trim>
+  </select>
+
+  <select id="checkUserMobileUnique" parameterType="com.module.product.orm.model.AuthorityUsers" resultType="int">
+    select count(id) from authority_users
+    <trim prefix="where" prefixOverrides="and | or">
+      <if test="id != null">id != #{id} AND </if>
+      <if test="mobile != null and mobile != ''"> mobile = #{mobile} </if>
+    </trim>
+  </select>
+
+  <update id="updateUserByNum" parameterType="com.module.product.orm.model.AuthorityUsers">
+    UPDATE authority_users set flowerName = #{flowerName},sex = #{sex} where num = #{num}
+  </update>
+
+  <select id="countProxyNum" resultType="map">
+    select u.create_user_id as userId,count(id) as amount from authority_users u where u.channel_type = 2 group by u.create_user_id
+  </select>
+
+  <select id="countExpandAmount" resultType="com.module.product.orm.model.AuthorityUsers">
+    select u.create_user_id AS id,
+    sum(recharge_amount) AS rechargeAmount,
+    sum(consumption_amount) AS consumptionAmount,
+    sum(receivable_amount) AS receivableAmount
+    from authority_users u where u.channel_type = 2 GROUP BY u.create_user_id
+  </select>
+
+  <select id="getEverydayStandDetail" resultType="com.module.product.orm.model.AuthorityUsers">
+    select
+      (
+        select
+          sum(e.receivable_amount)
+        from
+        user_recharge_examine e
+        where
+        e.examine_time between #{startDate} and #{endDate}
+        and e.recharge_id in (
+          select id from user_recharge  r
+          <where>
+          <if test="channelType != null and channelType == 0">
+            and r.proxy_user in (
+            select
+            id
+            from
+            authority_users
+            where
+            user_status = 1
+            and channel_type = 2
+            )
+          </if>
+          <if test="channelType != null and channelType == 1">
+            and r.proxy_user in (
+            select
+            id
+            from
+            authority_users
+            where
+            user_status = 1
+            and channel_type = 2
+            and create_user_id = #{loginUserId}
+            )
+          </if>
+          <if test="channelType != null and channelType == 2">
+            and r.proxy_user = #{loginUserId}
+          </if>
+          </where>
+        )
+      ) as receivableAmount,
+      (
+        select
+          sum(amount)
+        from
+        user_recharge r
+        where
+        (
+          (r.examine_state in (-1,1,2) and r.status = 0)
+          or (r.examine_state = 3 and r.status = 1)
+        )
+        <if test="channelType != null and channelType == 0">
+          and r.proxy_user in (
+          select
+          id
+          from
+          authority_users
+          where
+          user_status = 1
+          and channel_type = 2
+          )
+        </if>
+        <if test="channelType != null and channelType == 1">
+          and r.proxy_user in (
+          select
+          id
+          from
+          authority_users
+          where
+          user_status = 1
+          and channel_type = 2
+          and create_user_id = #{loginUserId}
+          )
+        </if>
+        <if test="channelType != null and channelType == 2">
+          and r.proxy_user = #{loginUserId}
+        </if>
+        and r.create_time
+        between #{startDate} and #{endDate}
+      ) as rechargeAmount,
+      (
+        select
+          sum(c.price)
+        from coupon c
+        inner join authority_users u
+        on u.id = c.create_user and u.channel_type = 2
+        where
+        c.status != -1
+        and c.create_time between #{startDate} and #{endDate}
+        <if test="channelType != null and channelType == 1">
+          and u.create_user_id = #{loginUserId}
+        </if>
+        <if test="channelType != null and channelType == 2">
+          and u.id = #{loginUserId}
+        </if>
+      ) as consumptionAmount,
+      (
+        select sum(surplus_amount)
+        FROM
+        authority_users u
+        where
+        u.user_status = 1
+        and u.channel_type = 2
+        <if test="channelType != null and channelType == 1">
+          and u.create_user_id = #{loginUserId}
+        </if>
+        <if test="channelType != null and channelType == 2">
+          and u.id = #{loginUserId}
+        </if>
+      ) as surplusAmount
+    from dual
+  </select>
+</mapper>
