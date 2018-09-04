@@ -23,13 +23,13 @@ public class EmailUtils {
             public void run() {
                 SimpleEmail simpleEmail = new SimpleEmail();
                 try {
-                    simpleEmail.setHostName("smtpcom.263xmail.com");//邮件服务器地址
+                    simpleEmail.setHostName("xxx.263xmail.com");//邮件服务器地址
                     simpleEmail.setSmtpPort(25);//端口号
-                    simpleEmail.setAuthentication("post@163.com", "2016");//邮件用户名密码
-                    simpleEmail.setFrom("post@163.com");//邮件发送人
+                    simpleEmail.setAuthentication("xxx@163.com", "2018");//邮件用户名密码
+                    simpleEmail.setFrom("xxx@163.com");//邮件发送人
                     simpleEmail.addTo(email);//邮件接收人
                     simpleEmail.setSubject("新员工密码(系统邮件请勿回复)");//邮件主题
-                    simpleEmail.setMsg("恭喜您成为好分网新员工!您的后台系统默认密码为:" + password + "." + "请登录http://back.haofenvip.com后台系统后尽快修改自己的密码.");//邮件正文
+                    simpleEmail.setMsg("恭喜您成为xxx网新员工!您的后台系统默认密码为:" + password + "." + "请登录http://back.xxx.com后台系统后尽快修改自己的密码.");//邮件正文
                     simpleEmail.send();//发送
                 } catch (EmailException e) {
                     logger.error("发送给" + email + "密码邮件时,异常", e);
